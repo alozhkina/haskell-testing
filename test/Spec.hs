@@ -19,20 +19,18 @@ prop_congruenceEquality a (Positive m) =
 
 --isSorted
 -- 1. Если список состоит из одного элемента, он всегда отсортирован
-prop_sortedSingleElement :: Int -> Bool -> Bool
+prop_sortedSingleElement :: (Ord a) => a -> Bool -> Bool
 prop_sortedSingleElement x ascending = isSorted [x] ascending == True
 
 -- 2. Если список состоит из двух элементов и булевый параметр True,
 -- он отсортирован, если первый элемент меньше или равен второму
-prop_sortedTwoElementsAscending :: Int -> Int -> Bool
-prop_sortedTwoElementsAscending x y =
-  isSorted [x, y] True == (x <= y)
+prop_sortedTwoElementsAscending :: (Ord a) => a -> a -> Bool
+prop_sortedTwoElementsAscending x y = isSorted [x, y] True == (x <= y)
 
 -- 3. Если список состоит из двух элементов и булевый параметр False,
 -- он отсортирован, если первый элемент больше или равен второму
-prop_sortedTwoElementsDescending :: Int -> Int -> Bool
-prop_sortedTwoElementsDescending x y =
-  isSorted [x, y] False == (x >= y)
+prop_sortedTwoElementsDescending :: (Ord a) => a -> a -> Bool
+prop_sortedTwoElementsDescending x y = isSorted [x, y] False == (x >= y)
 
 
 
@@ -43,6 +41,9 @@ main = do
   quickCheck prop_congruenceSymmetry
   quickCheck prop_congruenceEquality
   putStrLn "Testing isSorted"
-  quickCheck prop_sortedSingleElement
-  quickCheck prop_sortedTwoElementsAscending
-  quickCheck prop_sortedTwoElementsDescending
+  quickCheck (prop_sortedSingleElement :: Int -> Bool -> Bool)
+  quickCheck (prop_sortedTwoElementsAscending :: Int -> Int -> Bool)
+  quickCheck (prop_sortedTwoElementsDescending :: Int -> Int -> Bool)
+  quickCheck (prop_sortedSingleElement :: (String, Int) -> Bool -> Bool)
+  quickCheck (prop_sortedTwoElementsAscending :: (String, Int) -> (String, Int) -> Bool)
+  quickCheck (prop_sortedTwoElementsDescending :: (String, Int) -> (String, Int) -> Bool)
