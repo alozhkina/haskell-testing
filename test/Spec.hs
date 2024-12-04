@@ -33,6 +33,15 @@ prop_sortedTwoElementsDescending :: (Ord a) => a -> a -> Bool
 prop_sortedTwoElementsDescending x y = isSorted [x, y] False == (x >= y)
 
 
+-- 4. Если список отсортирован, то удаление любого элемента не нарушает сортировку
+prop_sortedAfterRemoval :: (Ord a) => [a] -> Bool -> Bool
+prop_sortedAfterRemoval xs ascending =
+   not (isSorted xs ascending) || all (\ys -> isSorted ys ascending) (removals xs)
+
+
+removals :: [a] -> [[a]]
+removals xs = [take i xs ++ drop (i + 1) xs | i <- [0 .. length xs - 1]]
+
 
 main :: IO ()
 main = do
@@ -40,10 +49,12 @@ main = do
   quickCheck prop_congruenceDifference
   quickCheck prop_congruenceSymmetry
   quickCheck prop_congruenceEquality
-  putStrLn "Testing isSorted"
+  putStrLn "Testing isSorted with int values"
   quickCheck (prop_sortedSingleElement :: Int -> Bool -> Bool)
   quickCheck (prop_sortedTwoElementsAscending :: Int -> Int -> Bool)
   quickCheck (prop_sortedTwoElementsDescending :: Int -> Int -> Bool)
+  putStrLn "Testing isSorted with diffrent values"
   quickCheck (prop_sortedSingleElement :: (String, Int) -> Bool -> Bool)
   quickCheck (prop_sortedTwoElementsAscending :: (String, Int) -> (String, Int) -> Bool)
   quickCheck (prop_sortedTwoElementsDescending :: (String, Int) -> (String, Int) -> Bool)
+  quickCheck (prop_sortedAfterRemoval :: [Float] -> Bool -> Bool)
