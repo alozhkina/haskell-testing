@@ -1,6 +1,7 @@
-import Lib (isCongruent)
+import Lib (isCongruent, isSorted)
 import Test.QuickCheck
 
+--isCongruent
 -- 1. Если два числа равны по модулю, то их разность делится на модуль
 prop_congruenceDifference :: Int -> Int -> Positive Int -> Bool
 prop_congruenceDifference a b (Positive m) =
@@ -16,9 +17,32 @@ prop_congruenceEquality :: Int -> Positive Int -> Bool
 prop_congruenceEquality a (Positive m) =
   isCongruent a a m == True
 
+--isSorted
+-- 1. Если список состоит из одного элемента, он всегда отсортирован
+prop_sortedSingleElement :: Int -> Bool -> Bool
+prop_sortedSingleElement x ascending = isSorted [x] ascending == True
+
+-- 2. Если список состоит из двух элементов и булевый параметр True,
+-- он отсортирован, если первый элемент меньше или равен второму
+prop_sortedTwoElementsAscending :: Int -> Int -> Bool
+prop_sortedTwoElementsAscending x y =
+  isSorted [x, y] True == (x <= y)
+
+-- 3. Если список состоит из двух элементов и булевый параметр False,
+-- он отсортирован, если первый элемент больше или равен второму
+prop_sortedTwoElementsDescending :: Int -> Int -> Bool
+prop_sortedTwoElementsDescending x y =
+  isSorted [x, y] False == (x >= y)
+
+
+
 main :: IO ()
 main = do
   putStrLn "Testing isCongruent"
   quickCheck prop_congruenceDifference
   quickCheck prop_congruenceSymmetry
   quickCheck prop_congruenceEquality
+  putStrLn "Testing isSorted"
+  quickCheck prop_sortedSingleElement
+  quickCheck prop_sortedTwoElementsAscending
+  quickCheck prop_sortedTwoElementsDescending
